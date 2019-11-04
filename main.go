@@ -1,11 +1,13 @@
 package main
 
 import (
+	"net/http"
+	"os"
+
 	"github.com/joho/godotenv"
 	"github.com/letsgo-framework/letsgo/database"
 	letslog "github.com/letsgo-framework/letsgo/log"
 	"github.com/letsgo-framework/letsgo/routes"
-	"os"
 )
 
 func main() {
@@ -24,17 +26,19 @@ func main() {
 
 	database.Connect()
 
-	srv := routes.PaveRoutes()
+	r := routes.PaveRoutes()
 
 	port := os.Getenv("PORT")
 	if port == "" {
 		port = ":8080"
 	}
 
-	if os.Getenv("SERVE_TLS") == "true" {
-		srv.RunTLS(port,os.Getenv("CERTIFICATE_LOCATION"),"KEY_FILE_LOCATION")
-	} else {
-		srv.Run(port)
-	}
+	http.ListenAndServe(port, r)
+
+	// if os.Getenv("SERVE_TLS") == "true" {
+	// 	srv.RunTLS(port,os.Getenv("CERTIFICATE_LOCATION"),"KEY_FILE_LOCATION")
+	// } else {
+	// 	srv.Run(port)
+	// }
 
 }

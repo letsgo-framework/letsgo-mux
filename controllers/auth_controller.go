@@ -1,34 +1,39 @@
 /*
-|--------------------------------------------------------------------------
-| Authentication Controller
-|--------------------------------------------------------------------------
-|
-| GetCredentials works on oauth2 Client Credentials Grant and returns CLIENT_ID, CLIENT_SECRET
-| GetToken takes CLIENT_ID, CLIENT_SECRET, grant_type, scope and returns access_token and some other information
+ |--------------------------------------------------------------------------
+ | Authentication Controller
+ |--------------------------------------------------------------------------
+ |
+ | GetCredentials works on oauth2 Client Credentials Grant and returns CLIENT_ID, CLIENT_SECRET
+ | GetToken takes CLIENT_ID, CLIENT_SECRET, grant_type, scope and returns access_token and some other information
 */
 
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/go-oauth2/gin-server"
+	"context"
+	"encoding/json"
+	"io/ioutil"
+	"net/http"
+	"time"
+
 	"github.com/google/uuid"
 	"github.com/letsgo-framework/letsgo/database"
+	"github.com/letsgo-framework/letsgo/helpers"
 	letslog "github.com/letsgo-framework/letsgo/log"
 	"github.com/letsgo-framework/letsgo/types"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
-	"golang.org/x/net/context"
 	"gopkg.in/oauth2.v3/manage"
 	"gopkg.in/oauth2.v3/models"
 	"gopkg.in/oauth2.v3/server"
 	"gopkg.in/oauth2.v3/store"
-	"time"
 )
 
 var clientStore = store.NewClientStore()
 var manager = manage.NewDefaultManager()
+
+var srv = server.NewDefaultServer(manager)
 
 // AuthInit initializes authentication
 func AuthInit() {
@@ -49,11 +54,10 @@ func AuthInit() {
 
 	manager.MapClientStorage(clientStore)
 
-	ginserver.InitServer(manager)
-	ginserver.SetAllowGetAccessRequest(true)
-	ginserver.SetClientInfoHandler(server.ClientFormHandler)
+	srv.SetAllowGetAccessRequest(true)
+	srv.SetClientInfoHandler(server.ClientFormHandler)
 
-	ginserver.SetPasswordAuthorizationHandler(login)
+	srv.SetPasswordAuthorizationHandler(login)
 
 	err := clientStore.Set("client@letsgo", &models.Client{
 		ID:     "client@letsgo",
@@ -67,7 +71,7 @@ func AuthInit() {
 }
 
 // GetCredentials sends client credentials
-func GetCredentials(c *gin.Context) {
+func GetCredentials(w http.ResponseWriter, r *http.Request) {
 	clientId := uuid.New().String()
 	clientSecret := uuid.New().String()
 	err := clientStore.Set(clientId, &models.Client{
@@ -78,46 +82,56 @@ func GetCredentials(c *gin.Context) {
 	if err != nil {
 		letslog.Error(err.Error())
 	}
-	c.JSON(200, map[string]string{"CLIENT_ID": clientId, "CLIENT_SECRET": clientSecret})
-	c.Done()
+	helpers.RespondWithJSON(w, http.StatusOK, map[string]string{"CLIENT_ID": clientId, "CLIENT_SECRET": clientSecret})
 }
 
-// GetToken sends accecc_token
-func GetToken(c *gin.Context) {
-	ginserver.HandleTokenRequest(c)
+// GetToken sends access_token
+func GetToken(w http.ResponseWriter, r *http.Request) {
+	srv.HandleTokenRequest(w, r)
 }
 
 // Verify accessToken with client
-func Verify(c *gin.Context) {
-	ti, exists := c.Get(ginserver.DefaultConfig.TokenKey)
-	if exists {
-		c.JSON(200, ti)
-		return
-	}
-	c.String(200, "not found")
-}
+// func Verify(c *gin.Context) {
+// 	ti, exists := c.Get(srv.DefaultConfig.TokenKey)
+// 	if exists {
+// 		c.JSON(200, ti)
+// 		return
+// 	}
+// 	c.String(200, "not found")
+// }
 
 // register
-func Register (c *gin.Context) {
+func Register(w http.ResponseWriter, r *http.Request) {
+	raw, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	// Transform into RequestBody struct
 	a := types.User{}
+	err = json.Unmarshal(raw, a)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
 	ctx := context.Background()
 	collection := database.UserCollection()
-	err := c.BindJSON(&a)
-	a.Password,_ = generateHash(a.Password)
-	a.Id = primitive.NewObjectID()
 
+	a.Password, _ = generateHash(a.Password)
+	a.Id = primitive.NewObjectID()
 
 	if err != nil {
 		letslog.Error(err.Error())
-		c.Abort()
+		return
 	}
 	_, err = collection.InsertOne(ctx, a)
 	if err != nil {
 		letslog.Error(err.Error())
-		c.Abort()
+		return
 	}
-	c.JSON(200, map[string]string{"message" : "Registration Successful"})
-	c.Done()
+	helpers.RespondWithJSON(w, http.StatusOK, map[string]string{"message": "Registration Successful"})
 }
 
 // Generate a salted hash for the input string
@@ -140,7 +154,7 @@ func compare(hash string, s string) error {
 	return bcrypt.CompareHashAndPassword(existing, incoming)
 }
 
-func login (username, password string) (userID string, err error) {
+func login(username, password string) (userID string, err error) {
 
 	collection := database.UserCollection()
 
@@ -163,25 +177,25 @@ func login (username, password string) (userID string, err error) {
 }
 
 // Returns ObjectId of logged in user
-func AuthId(c *gin.Context) (primitive.ObjectID, error) {
-	ti, _ := c.Get(ginserver.DefaultConfig.TokenKey)
-	token := ti.(*models.Token)
-	return primitive.ObjectIDFromHex(token.UserID)
-}
+// func AuthId(c *gin.Context) (primitive.ObjectID, error) {
+// 	ti, _ := c.Get(srv.DefaultConfig.TokenKey)
+// 	token := ti.(*models.Token)
+// 	return primitive.ObjectIDFromHex(token.UserID)
+// }
 
-// Returns Client of the logged in user
-func AuthClient(c *gin.Context) string {
-	ti, _ := c.Get(ginserver.DefaultConfig.TokenKey)
-	token := ti.(*models.Token)
-	return token.ClientID
-}
+// // Returns Client of the logged in user
+// func AuthClient(c *gin.Context) string {
+// 	ti, _ := c.Get(srv.DefaultConfig.TokenKey)
+// 	token := ti.(*models.Token)
+// 	return token.ClientID
+// }
 
-// Returns logged in user
-func AuthUser(c *gin.Context) (types.User, error) {
-	id, _ := AuthId(c)
-	user := types.User{}
-	collection := database.UserCollection()
-	err := collection.FindOne(context.Background(), bson.M{"_id": id}).Decode(&user)
+// // Returns logged in user
+// func AuthUser(c *gin.Context) (types.User, error) {
+// 	id, _ := AuthId(c)
+// 	user := types.User{}
+// 	collection := database.UserCollection()
+// 	err := collection.FindOne(context.Background(), bson.M{"_id": id}).Decode(&user)
 
-	return user, err
-}
+// 	return user, err
+//}

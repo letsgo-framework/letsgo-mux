@@ -1,33 +1,37 @@
 package routes
 
 import (
-	"github.com/gin-gonic/gin"
-	ginserver "github.com/go-oauth2/gin-server"
+	"net/http"
+
+	"github.com/gorilla/mux"
 	"github.com/letsgo-framework/letsgo/controllers"
-	"github.com/letsgo-framework/letsgo/helpers"
 )
 
-func AuthRoutes(r *gin.RouterGroup) *gin.RouterGroup {
+func AuthRouteHandler(r *mux.Router) {
 
 	// Auth Init
 	controllers.AuthInit()
-	config := ginserver.Config{
-		ErrorHandleFunc: func(ctx *gin.Context, err error) {
-			helpers.RespondWithError(ctx, 401, "invalid access_token")
-		},
-		TokenKey: "github.com/go-oauth2/gin-server/access-token",
-		Skipper: func(_ *gin.Context) bool {
-			return false
-		},
-	}
 
-	r.GET("/credentials", controllers.GetCredentials)
-	r.GET("/login", controllers.GetToken)
-	r.POST("/register", controllers.Register)
-	auth := r.Group("auth")
-	{
-		auth.Use(ginserver.HandleTokenVerify(config))
-	}
+	// config := ginserver.Config{
+	// 	ErrorHandleFunc: func(ctx *gin.Context, err error) {
+	// 		helpers.RespondWithError(ctx, 401, "invalid access_token")
+	// 	},
+	// 	TokenKey: "github.com/go-oauth2/gin-server/access-token",
+	// 	Skipper: func(_ *gin.Context) bool {
+	// 		return false
+	// 	},
+	// }
+	// var manager = manage.NewDefaultManager()
+	// var srv = server.NewDefaultServer(manager)
 
-	return auth
+	r.HandleFunc("/credentials", controllers.GetCredentials).Methods(http.MethodGet)
+	r.HandleFunc("/login", controllers.GetToken).Methods(http.MethodGet)
+	r.HandleFunc("/register", controllers.Register).Methods(http.MethodPost)
+
+	// r.Use(srv.HandleTokenVerify())
+
+	// auth := r.Group("auth")
+	// {
+	// 	auth.Use(ginserver.HandleTokenVerify(config))
+	// }
 }

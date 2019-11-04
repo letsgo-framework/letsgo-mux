@@ -1,7 +1,9 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
+	"net/http"
+
+	"github.com/letsgo-framework/letsgo/helpers"
 )
 
 // Welcome !! The content below is only a placeholder and can be replaced.
@@ -13,7 +15,7 @@ type Welcome struct {
 }
 
 // Greet is the response for api/v1
-func Greet(c *gin.Context) {
+func Greet(w http.ResponseWriter, r *http.Request) {
 
 	welcome := Welcome{
 		Greet:    "Welcome to letsGo",
@@ -21,6 +23,6 @@ func Greet(c *gin.Context) {
 		Github:   "https://github.com/letsgo-framework/letsgo",
 		Examples: "Coming Soon",
 	}
-	c.JSON(200, welcome)
-	c.Done()
+
+	helpers.RespondWithJSON(w, http.StatusOK, welcome)
 }
