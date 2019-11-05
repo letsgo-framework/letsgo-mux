@@ -91,14 +91,14 @@ func GetToken(w http.ResponseWriter, r *http.Request) {
 }
 
 // Verify accessToken with client
-// func Verify(c *gin.Context) {
-// 	ti, exists := c.Get(srv.DefaultConfig.TokenKey)
-// 	if exists {
-// 		c.JSON(200, ti)
-// 		return
-// 	}
-// 	c.String(200, "not found")
-// }
+func Verify(w http.ResponseWriter, r *http.Request) {
+	ti, exists := srv.ValidationBearerToken(r)
+	if exists == nil {
+		helpers.RespondWithJSON(w, http.StatusOK, ti)
+		return
+	}
+	helpers.RespondWithJSON(w, http.StatusOK, map[string]string{"message": "Authentication unsuccessful"})
+}
 
 // register
 func Register(w http.ResponseWriter, r *http.Request) {

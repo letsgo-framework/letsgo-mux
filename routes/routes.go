@@ -30,7 +30,6 @@ func PaveRoutes() *mux.Router {
 	// jobs.Run()
 	AuthRouteHandler(r)
 	r.HandleFunc("/", controllers.Greet).Methods(http.MethodGet)
-	r.HandleFunc("/login", controllers.GetToken).Methods(http.MethodGet)
 	// v1 := r.Group("/api/v1")
 	// {
 	// 	v1.GET("/", controllers.Greet)

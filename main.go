@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"net/http"
 	"os"
 
@@ -33,6 +34,7 @@ func main() {
 		port = ":8080"
 	}
 
+	fmt.Println("Server is running on port", port)
 	http.ListenAndServe(port, r)
 
 	// if os.Getenv("SERVE_TLS") == "true" {

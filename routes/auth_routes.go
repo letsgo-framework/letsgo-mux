@@ -12,15 +12,6 @@ func AuthRouteHandler(r *mux.Router) {
 	// Auth Init
 	controllers.AuthInit()
 
-	// config := ginserver.Config{
-	// 	ErrorHandleFunc: func(ctx *gin.Context, err error) {
-	// 		helpers.RespondWithError(ctx, 401, "invalid access_token")
-	// 	},
-	// 	TokenKey: "github.com/go-oauth2/gin-server/access-token",
-	// 	Skipper: func(_ *gin.Context) bool {
-	// 		return false
-	// 	},
-	// }
 	// var manager = manage.NewDefaultManager()
 	// var srv = server.NewDefaultServer(manager)
 
@@ -28,6 +19,9 @@ func AuthRouteHandler(r *mux.Router) {
 	r.HandleFunc("/login", controllers.GetToken).Methods(http.MethodGet)
 	r.HandleFunc("/register", controllers.Register).Methods(http.MethodPost)
 
+	auth := r.PathPrefix("/auth").Subrouter()
+
+	auth.HandleFunc("", controllers.Verify).Methods(http.MethodGet)
 	// r.Use(srv.HandleTokenVerify())
 
 	// auth := r.Group("auth")
