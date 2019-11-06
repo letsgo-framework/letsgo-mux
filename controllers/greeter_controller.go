@@ -20,7 +20,7 @@ func Greet(w http.ResponseWriter, r *http.Request) {
 	welcome := Welcome{
 		Greet:    "Welcome to letsGo",
 		Doc:      "https://letsgo-framework.github.io/",
-		Github:   "https://github.com/letsgo-framework/letsgo",
+		Github:   "https://github.com/letsgo-framework/letsgo-mux",
 		Examples: "Coming Soon",
 	}
 
