@@ -12,6 +12,7 @@ package controllers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"time"
@@ -110,9 +111,11 @@ func Register(w http.ResponseWriter, r *http.Request) {
 
 	// Transform into RequestBody struct
 	a := types.User{}
-	err = json.Unmarshal(raw, a)
+	err = json.Unmarshal(raw, &a)
+
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
+		fmt.Println(err.Error())
 		return
 	}
 

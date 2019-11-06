@@ -35,12 +35,11 @@ func main() {
 	}
 
 	fmt.Println("Server is running on port", port)
-	http.ListenAndServe(port, r)
 
-	// if os.Getenv("SERVE_TLS") == "true" {
-	// 	srv.RunTLS(port,os.Getenv("CERTIFICATE_LOCATION"),"KEY_FILE_LOCATION")
-	// } else {
-	// 	srv.Run(port)
-	// }
+	if os.Getenv("SERVE_TLS") == "true" {
+		http.ListenAndServeTLS(port, os.Getenv("CERTIFICATE_LOCATION"), os.Getenv("KEY_FILE_LOCATION"), r)
+	} else {
+		http.ListenAndServe(port, r)
+	}
 
 }

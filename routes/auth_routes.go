@@ -19,10 +19,4 @@ func AuthRouteHandler(r *mux.Router) *mux.Router {
 	auth := r.PathPrefix("/auth").Subrouter()
 
 	return auth
-	// r.Use(srv.HandleTokenVerify())
-
-	// auth := r.Group("auth")
-	// {
-	// 	auth.Use(ginserver.HandleTokenVerify(config))
-	// }
 }
