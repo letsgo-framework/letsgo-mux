@@ -3,7 +3,7 @@ package controllers
 import (
 	"net/http"
 
-	"github.com/letsgo-framework/letsgo/helpers"
+	"github.com/letsgo-framework/letsgo-mux/helpers"
 )
 
 // Welcome !! The content below is only a placeholder and can be replaced.

@@ -4,16 +4,13 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/letsgo-framework/letsgo/controllers"
+	"github.com/letsgo-framework/letsgo-mux/controllers"
 )
 
-func AuthRouteHandler(r *mux.Router) {
+func AuthRouteHandler(r *mux.Router) *mux.Router {
 
 	// Auth Init
 	controllers.AuthInit()
-
-	// var manager = manage.NewDefaultManager()
-	// var srv = server.NewDefaultServer(manager)
 
 	r.HandleFunc("/credentials", controllers.GetCredentials).Methods(http.MethodGet)
 	r.HandleFunc("/login", controllers.GetToken).Methods(http.MethodGet)
@@ -21,7 +18,7 @@ func AuthRouteHandler(r *mux.Router) {
 
 	auth := r.PathPrefix("/auth").Subrouter()
 
-	auth.HandleFunc("", controllers.Verify).Methods(http.MethodGet)
+	return auth
 	// r.Use(srv.HandleTokenVerify())
 
 	// auth := r.Group("auth")

@@ -14,7 +14,8 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
-	"github.com/letsgo-framework/letsgo/controllers"
+	"github.com/letsgo-framework/letsgo-mux/controllers"
+	"github.com/letsgo-framework/letsgo-mux/middlewares"
 )
 
 // PaveRoutes sets up all api routes
@@ -23,19 +24,18 @@ func PaveRoutes() *mux.Router {
 	r := mr.PathPrefix("/api/v1").Subrouter()
 
 	// CORS
-	// r.HandleFunc("/foo", fooHandler).Methods(http.MethodGet, http.MethodPut, http.MethodPatch, http.MethodOptions)
 	r.Use(mux.CORSMethodMiddleware(r))
 
 	// Start CRON
 	// jobs.Run()
-	AuthRouteHandler(r)
-	r.HandleFunc("/", controllers.Greet).Methods(http.MethodGet)
-	// v1 := r.Group("/api/v1")
-	// {
-	// 	v1.GET("/", controllers.Greet)
-	// 	auth := AuthRoutes(v1)
-	// 	auth.GET("/", controllers.Verify)
-	// }
+
+	// greeter
+	r.HandleFunc("", controllers.Greet).Methods(http.MethodGet)
+
+	// Register Auth routes
+	auth := AuthRouteHandler(r)
+	auth.Use(middlewares.Auth)
+	auth.HandleFunc("", controllers.Verify).Methods(http.MethodGet)
 
 	return r
 }

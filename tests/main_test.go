@@ -7,8 +7,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/letsgo-framework/letsgo/controllers"
-	"github.com/letsgo-framework/letsgo/database"
+	"github.com/letsgo-framework/letsgo-mux/controllers"
+	"github.com/letsgo-framework/letsgo-mux/database"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
 )
 

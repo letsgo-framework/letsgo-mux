@@ -9,13 +9,12 @@
 ### Ingredients
 
 - Go
-- [gin] ( https://github.com/gin-gonic/gin )
+- [mux] ( https://github.com/gorilla/mux )
 - [mongodb] ( https://www.mongodb.com/ )
 - [mongo-go-driver] ( https://github.com/mongodb/mongo-go-driver )
 - [oauth2] ( https://github.com/golang/oauth2 )
 - [check] ( https://godoc.org/gopkg.in/check.v1 )
 - [godotenv] ( https://github.com/joho/godotenv )
-- [go-oauth2/gin-server] ( github.com/go-oauth2/gin-server )
 - [cors] ( github.com/gin-contrib/cors )
 ***
 ### Directory Structure

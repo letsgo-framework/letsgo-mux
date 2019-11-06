@@ -17,10 +17,10 @@ import (
 	"time"
 
 	"github.com/google/uuid"
-	"github.com/letsgo-framework/letsgo/database"
-	"github.com/letsgo-framework/letsgo/helpers"
-	letslog "github.com/letsgo-framework/letsgo/log"
-	"github.com/letsgo-framework/letsgo/types"
+	"github.com/letsgo-framework/letsgo-mux/database"
+	"github.com/letsgo-framework/letsgo-mux/helpers"
+	letslog "github.com/letsgo-framework/letsgo-mux/log"
+	"github.com/letsgo-framework/letsgo-mux/types"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"golang.org/x/crypto/bcrypt"
@@ -33,7 +33,7 @@ import (
 var clientStore = store.NewClientStore()
 var manager = manage.NewDefaultManager()
 
-var srv = server.NewDefaultServer(manager)
+var Srv = server.NewDefaultServer(manager)
 
 // AuthInit initializes authentication
 func AuthInit() {
@@ -54,10 +54,10 @@ func AuthInit() {
 
 	manager.MapClientStorage(clientStore)
 
-	srv.SetAllowGetAccessRequest(true)
-	srv.SetClientInfoHandler(server.ClientFormHandler)
+	Srv.SetAllowGetAccessRequest(true)
+	Srv.SetClientInfoHandler(server.ClientFormHandler)
 
-	srv.SetPasswordAuthorizationHandler(login)
+	Srv.SetPasswordAuthorizationHandler(login)
 
 	err := clientStore.Set("client@letsgo", &models.Client{
 		ID:     "client@letsgo",
@@ -87,12 +87,12 @@ func GetCredentials(w http.ResponseWriter, r *http.Request) {
 
 // GetToken sends access_token
 func GetToken(w http.ResponseWriter, r *http.Request) {
-	srv.HandleTokenRequest(w, r)
+	Srv.HandleTokenRequest(w, r)
 }
 
 // Verify accessToken with client
 func Verify(w http.ResponseWriter, r *http.Request) {
-	ti, exists := srv.ValidationBearerToken(r)
+	ti, exists := Srv.ValidationBearerToken(r)
 	if exists == nil {
 		helpers.RespondWithJSON(w, http.StatusOK, ti)
 		return
@@ -175,27 +175,3 @@ func login(username, password string) (userID string, err error) {
 		return userID, err
 	}
 }
-
-// Returns ObjectId of logged in user
-// func AuthId(c *gin.Context) (primitive.ObjectID, error) {
-// 	ti, _ := c.Get(srv.DefaultConfig.TokenKey)
-// 	token := ti.(*models.Token)
-// 	return primitive.ObjectIDFromHex(token.UserID)
-// }
-
-// // Returns Client of the logged in user
-// func AuthClient(c *gin.Context) string {
-// 	ti, _ := c.Get(srv.DefaultConfig.TokenKey)
-// 	token := ti.(*models.Token)
-// 	return token.ClientID
-// }
-
-// // Returns logged in user
-// func AuthUser(c *gin.Context) (types.User, error) {
-// 	id, _ := AuthId(c)
-// 	user := types.User{}
-// 	collection := database.UserCollection()
-// 	err := collection.FindOne(context.Background(), bson.M{"_id": id}).Decode(&user)
-
-// 	return user, err
-//}

@@ -6,9 +6,9 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
-	"github.com/letsgo-framework/letsgo/database"
-	letslog "github.com/letsgo-framework/letsgo/log"
-	"github.com/letsgo-framework/letsgo/routes"
+	"github.com/letsgo-framework/letsgo-mux/database"
+	letslog "github.com/letsgo-framework/letsgo-mux/log"
+	"github.com/letsgo-framework/letsgo-mux/routes"
 )
 
 func main() {
