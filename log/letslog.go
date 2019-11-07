@@ -2,11 +2,12 @@ package log
 
 import (
 	"fmt"
-	"github.com/mattn/go-colorable"
-	"gopkg.in/natefinch/lumberjack.v2"
 	"log"
 	"os"
 	"time"
+
+	"github.com/mattn/go-colorable"
+	"gopkg.in/natefinch/lumberjack.v2"
 )
 
 var logger = log.New(colorable.NewColorableStderr(), "", 0)
@@ -15,13 +16,14 @@ type logFunc func(string, ...interface{})
 type logFuncInterface func(...interface{})
 
 var (
-	Debug logFunc
+	// Debug log
+	Debug   logFunc
 	Debugln logFuncInterface
-	Info  logFunc
-	Infoln logFuncInterface
-	Warn  logFunc
-	Warnln logFuncInterface
-	Error logFunc
+	Info    logFunc
+	Infoln  logFuncInterface
+	Warn    logFunc
+	Warnln  logFuncInterface
+	Error   logFunc
 	Errorln logFuncInterface
 )
 
@@ -64,7 +66,6 @@ func getenv() string {
 
 	return logLevel
 }
-
 
 func find(a []string, x string) int {
 	for i, n := range a {
@@ -138,10 +139,12 @@ func logColor(logName string) string {
 	return colors[colorName]
 }
 
+// Fatal prints fatal logs
 func Fatal(err error) {
 	logger.Fatal(err)
 }
 
+// InitLogFuncs initializes custom log functions
 func InitLogFuncs() {
 	// Configure Logging
 	logger.SetOutput(&lumberjack.Logger{

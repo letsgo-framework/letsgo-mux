@@ -34,6 +34,7 @@ import (
 var clientStore = store.NewClientStore()
 var manager = manage.NewDefaultManager()
 
+// oauth2 server
 var Srv = server.NewDefaultServer(manager)
 
 // AuthInit initializes authentication
@@ -101,7 +102,7 @@ func Verify(w http.ResponseWriter, r *http.Request) {
 	helpers.RespondWithJSON(w, http.StatusOK, map[string]string{"message": "Authentication unsuccessful"})
 }
 
-// register
+// Register
 func Register(w http.ResponseWriter, r *http.Request) {
 	raw, err := ioutil.ReadAll(r.Body)
 	if err != nil {

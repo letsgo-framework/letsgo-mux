@@ -253,11 +253,11 @@ func TestDBInsert(t *testing.T) {
 		t.Fatal(err)
 	}
 	if result != input {
-		t.Fatal("Insertion Unsuccesful!")
+		t.Fatal("Insertion Unsuccessful!")
 	}
 }
 
-//Test User-registartion
+//Test User-registration
 func Test1UserRegistration(t *testing.T) {
 	data := types.User{
 		Name:     "Letsgo User",
@@ -280,7 +280,7 @@ func Test1UserRegistration(t *testing.T) {
 	json.Unmarshal(respData, &user)
 	if resp.StatusCode != 200 {
 		fmt.Println(resp.StatusCode)
-		t.Fatal("Registration Unsuccesful!")
+		t.Fatal("Registration Unsuccessful!")
 	}
 }
 
@@ -296,7 +296,7 @@ func Test2UserLoginPasswordGrant(t *testing.T) {
 	defer resp.Body.Close()
 
 	if resp.StatusCode != 200 {
-		t.Fatal("Login Unsuccesful!")
+		t.Fatal("Login Unsuccessful!")
 	}
 }
 

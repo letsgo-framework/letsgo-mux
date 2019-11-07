@@ -7,6 +7,7 @@ import (
 	"github.com/letsgo-framework/letsgo-mux/controllers"
 )
 
+// AuthRouteHandler declares basic authentcation routes
 func AuthRouteHandler(r *mux.Router) *mux.Router {
 
 	// Auth Init

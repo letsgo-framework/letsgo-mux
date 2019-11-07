@@ -11,6 +11,7 @@ import (
 	"strings"
 )
 
+// Mail struct
 type Mail struct {
 	senderId string
 	toIds    []string
@@ -19,30 +20,34 @@ type Mail struct {
 	data     interface{}
 }
 
+// SmtpServer struct
 type SmtpServer struct {
 	host string
 	port string
 }
 
+// ServerName concatinates host and port
 func (s *SmtpServer) ServerName() string {
 	return s.host + ":" + s.port
 }
 
+// BuildMessage creates mail body
 func (mail *Mail) BuildMessage() bytes.Buffer {
 
 	var body bytes.Buffer
 	headers := "MIME-version: 1.0;\nContent-Type: text/html;"
-	body.Write([]byte(fmt.Sprintf("From: %s\r\n",  mail.senderId)))
+	body.Write([]byte(fmt.Sprintf("From: %s\r\n", mail.senderId)))
 	body.Write([]byte(fmt.Sprintf("To: %s\r\n", strings.Join(mail.toIds, ";"))))
 	body.Write([]byte(fmt.Sprintf("Subject: %s\n%s\n\n", mail.subject, headers)))
 	wd, _ := os.Getwd()
-	t, _ := template.ParseFiles(wd+"/mail/templates/"+mail.template)
+	t, _ := template.ParseFiles(wd + "/mail/templates/" + mail.template)
 
 	t.Execute(&body, mail.data)
 
 	return body
 }
 
+// SendMail sends mailbody to multiple emails
 func SendMail(toIds []string, subject string, template string, data interface{}) {
 	var Host = os.Getenv("MAIL_HOST")
 	var Port = os.Getenv("MAIL_PORT")

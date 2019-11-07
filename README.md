@@ -1,4 +1,5 @@
 # letsgo-mux
+[![Build Status](https://travis-ci.org/letsgo-framework/letsgo-mux.svg?branch=master)](https://travis-ci.org/letsgo-framework/letsgo-mux)
 [![Join the chat at https://gitter.im/letsgo-framework/community](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/letsgo-framework/community)
 
 ## Go api starter

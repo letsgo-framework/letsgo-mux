@@ -5,6 +5,7 @@ import (
 	"net/http"
 )
 
+// RespondWithJSON sends response in json format
 func RespondWithJSON(w http.ResponseWriter, code int, message interface{}) {
 	response, _ := json.Marshal(message)
 

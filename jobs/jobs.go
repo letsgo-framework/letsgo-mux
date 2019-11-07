@@ -4,6 +4,7 @@ import (
 	"github.com/robfig/cron"
 )
 
+// Run CRON
 func Run() *cron.Cron {
 	c := cron.New()
 
