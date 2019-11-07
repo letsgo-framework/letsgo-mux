@@ -1,6 +1,8 @@
 # letsgo-mux
 [![Build Status](https://travis-ci.org/letsgo-framework/letsgo-mux.svg?branch=master)](https://travis-ci.org/letsgo-framework/letsgo-mux)
 [![Go Report Card](https://goreportcard.com/badge/github.com/letsgo-framework/letsgo-mux)](https://goreportcard.com/report/github.com/letsgo-framework/letsgo-mux)
+[![Coverage Status](https://coveralls.io/repos/github/letsgo-framework/letsgo-mux/badge.svg?branch=master)](https://coveralls.io/github/letsgo-framework/letsgo-mux?branch=master)
+[![Sourcegraph](https://sourcegraph.com/github.com/letsgo-framework/letsgo-mux/-/badge.svg)](https://sourcegraph.com/github.com/letsgo-framework/letsgo-mux?badge)
 [![Join the chat at https://gitter.im/letsgo-framework/community](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/letsgo-framework/community)
 
 ## Go api starter
@@ -53,10 +55,10 @@ go get github.com/letsgo-framework/letsgo-cli
 ### Create a new project
 
 ```bash
-letsgo-cli init <import_namespace> <project_name>
+letsgo-cli init -importPath=<import_namespace> -directory=<project_name> -router=<router>
 ```
 
-- **letsgo-cli init github.com myapp**<br/>
+- **letsgo-cli init -importPath=github.com -directory=myapp -router=gin**<br/>
   Generates a new project called **myapp** in your `GOPATH` inside `github.com` and installs the default plugins through the glide.
 ***
 ### Run : ```go run main.go```
